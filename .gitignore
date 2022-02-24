@@ -1,0 +1,4 @@
+blocks
+.env
+node_modules
+mined_block.txt
