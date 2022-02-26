@@ -10,8 +10,8 @@ let readlineInterface = readline.createInterface({
 });
 let miner = null;
 
-readlineInterface.question("UTORID? (exactly 8 chars) ",(UTORID) => {
-	if(/^[a-z0-9]{8}$/.test(UTORID) === false){
+readlineInterface.question("UTORID? (exactly 8 chars, if less than 8 chars then prefix it with underscores so it is exactly 8 chars) ",(UTORID) => {
+	if(/^[a-z0-9_]{8}$/.test(UTORID) === false){
 		console.log(`Invalid UTORID: '${UTORID}'`);
 		readlineInterface.close();
 		return;
@@ -29,17 +29,17 @@ readlineInterface.question("UTORID? (exactly 8 chars) ",(UTORID) => {
 
 
 function start_mining(UTORID, hash){
-	console.log("Let's start mining!");
+	console.log("[MINER] Let's start mining!");
 	let buffer = transform_to_buffer(UTORID, hash, '');
 	let startTime = Date.now();
 	miner = new Miner(buffer, (solution) => {
 		if(solution === null){
-			console.log("No solution found (wow, what are the odds?)");
+			console.log("[MINER] No solution found (wow, what are the odds?)");
 			process.exit();
 		}else{
 			let totalTime = ((Date.now() - startTime)/1000).toFixed(2);
-			console.log(`Finished mining a block! Writing the solution file (Duration: ${totalTime}s).`);
-			console.log(`Verification: ${bytesToHex(solution)} results in hash ${miner.get_hash(solution)}`);
+			console.log(`[MINER] Finished mining a block! Writing the solution file (Duration: ${totalTime}s).`);
+			console.log(`Verification: ${bytesToHex(solution)} results in hash:\n${miner.get_hash(solution)}`);
 			fs.writeFile(__dirname + "/mined_block.txt", bytesToHex(solution), 'utf8', function(error) {
 			    if(error) {
 			        return console.log(error);

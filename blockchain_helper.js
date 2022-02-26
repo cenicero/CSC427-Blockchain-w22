@@ -35,10 +35,10 @@ class Block{
 }
 
 class Blockchain{
-	constructor(folder_name, trace){
+	constructor(folder_name, trace_flag){
 		this.folder_name = folder_name;
 		this.list_of_blocks = [];
-		this.trace = trace;
+		this.trace_flag = trace_flag;
 	}
 
 	import_blocks(){
@@ -60,14 +60,15 @@ class Blockchain{
 					console.log(`ERROR! Block ${i} is not a valid block. How did this happen?`);
 					break;
 				}
-				console.log(`Imported block ${i}`);
+				//console.log(`Imported block ${i}`);
 				this.list_of_blocks.push(block);
 				i++;
 			}catch(e){
-				console.log(`No local block ${i}, finished importing`);
+				//console.log(`No local block ${i}, finished importing`);
 				break;
 			}
 		}
+		console.log(`Read ${i-1} blocks from local files`);
 	}
 
 	wipe(){
@@ -90,26 +91,29 @@ class Blockchain{
 	}
 
 	add_block(block_data){
-		let new_id = this.list_of_blocks.length;
+		var new_id = this.list_of_blocks.length;
 		var block = new Block(block_data, new_id);
 		var is_consistent = this.validate_block(block);
-		console.log(block.toString());
-		console.log("Hash: " + block.get_hash());
-		console.log(`Will we add this block? ${is_consistent}`);
+		this.trace(block.toString());
+		this.trace("Hash: " + block.get_hash());
+		this.trace(`Will we add this block? ${is_consistent}`);
 		if(is_consistent){
 			this.list_of_blocks.push(block);
-			fs.writeFile(`./${this.folder_name}/block${new_id}.bin`, block_data, (error) => {
-				if(error){
-					console.log(error);
-				}
-				console.log(`Successfully wrote block ${new_id} to folder ${this.folder_name}`);
-			});
+			let fd = fs.openSync(`./${this.folder_name}/block${new_id}.bin`, 'w');
+			let bw = fs.writeSync(fd, block_data, 0, block_data.length);
+			fs.closeSync(fd);
+			this.trace(`Successfully wrote block ${new_id} to folder ${this.folder_name}`);
 		}
+		return is_consistent;
+	}
+
+	get_block(index){
+		if(index >= this.list_of_blocks.length)return null;
+		else return this.list_of_blocks[index].exportBytes();
 	}
 
 	get_prev_block_hash(){
-		let prev_block = this.list_of_blocks[this.list_of_blocks.length - 1];
-		return prev_block.get_hash();
+		return this.list_of_blocks[this.list_of_blocks.length - 1].get_hash();
 	}
 
 	validate_block(block){
@@ -143,8 +147,19 @@ class Blockchain{
 		}
 	}
 
+	print_last_n(n){
+		let min = Math.max(0, this.list_of_blocks.length - n);
+		for(let i = min; i < this.list_of_blocks.length; i++){
+			console.log(this.list_of_blocks[i].toString());
+		}
+	}
+
 	get_blockchain_length(){
 		return this.list_of_blocks.length;
+	}
+
+	trace(msg){
+		if(this.trace_flag)console.log(`[TRACE] ${msg}`);
 	}
 
 }
