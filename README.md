@@ -7,7 +7,7 @@ You will need a machine with npm and node.js installed.
 1. Clone the repository to your machine
 2. In a terminal, cd into the repository
 3. Install all of the node dependencies using `npm install`
-4. Set up a .env file. The .env should contain three environment variables: `IP=<IP>`, `PORT=<port>` and `FOLDER_NAME=<name of a folder in the repo to hold blockchain info>`. For the folder name one, you will want to create a new folder as well. There is also an option env variable you may want to set up if you want to run the main program twice at the same time: `BACKUP_PORT=<second port>`
+4. Set up a .env file. The .env should contain three environment variables: `IP=<IP>`, `PORT=<port>` and `FOLDER_NAME=<name of a folder in the repo to hold blockchain info>`. For the folder name one, you will want to create a new folder as well. There is also an optional environment variable you may want to set up if you want to run two processes of the main program at the same time: `BACKUP_PORT=<second port>`
 5. Run the program by using `node blockchain_node.js`
 
 ## Files
