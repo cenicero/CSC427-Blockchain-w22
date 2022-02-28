@@ -386,11 +386,6 @@ function main(){
 				break;
 
 			case "process_mine":
-				if(clientSocket === null){
-					console.log("You need to be directly connected to a parent node. Use the connect command.");
-					break;
-				}
-
 				let hex_block = "";
 				try{
 					hex_block = fs.readFileSync('./mined_block.txt','utf8');
